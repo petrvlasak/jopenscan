@@ -1,0 +1,21 @@
+{
+  "machine": {
+    "cameraType": "RPI",
+    "ringlightLedsOn": "LED1",
+    "ringlightIntensity": 40
+  },
+  "camera": {
+    "brightness": 40,
+    "contrast": 45,
+    "shutterSpeed": 55,
+    "cropX": 10,
+    "cropY": 15,
+    "timePerPhoto": 1.5,
+    "releaseTime": 20
+  },
+  "photosPerRotation": 20,
+  "verticalPositions": 15,
+  "startDeflection": 40,
+  "endDeflection": 35,
+  "projectName": "TEST-Project-1"
+}

@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: JOpenScan
+
+app:
+  version: "@project.version@"

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:extend>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-12 mt-4" wicket:enclosure="camPreview">
+            <div class="h-100" wicket:id="camPreview">
+                <div wicket:id="camPreviewPanel"></div>
+            </div>
+        </div>
+        <div class="order-lg-first mt-4" wicket:id="machineColumn">
+            <div class="h-100" wicket:id="machine">
+                <div wicket:id="machinePanel"></div>
+            </div>
+        </div>
+        <div class="mt-4" wicket:id="camParamsColumn">
+            <div class="h-100" wicket:id="camParams">
+                <div wicket:id="camParamsPanel"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-4" wicket:id="currentJob">
+        <div wicket:id="currentJobPanel"></div>
+    </div>
+</div>
+
+</wicket:extend>
+</body>
+</html>

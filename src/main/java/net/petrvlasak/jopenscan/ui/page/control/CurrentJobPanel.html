@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:panel>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3 col-6 mt-3" wicket:id="photosPerRotation"></div>
+        <div class="col-lg-3 col-6 mt-3" wicket:id="verticalPositions"></div>
+        <div class="col-lg-3 col-6 mt-3" wicket:id="startDeflection"></div>
+        <div class="col-lg-3 col-6 mt-3" wicket:id="endDeflection"></div>
+    </div>
+    <div class="row align-items-lg-top">
+        <div class="col-lg-4 col-12 mt-3">
+            <form class="w-100" wicket:id="projectForm">
+                <div class="d-lg-flex align-items-lg-baseline">
+                    <label wicket:for="projectName" class="form-label text-nowrap mb-0">Project Name:</label>
+                    <div class="ms-lg-3 w-100 mt-2">
+                        <input type="text" wicket:id="projectName" class="form-control">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-8 col-12 mt-3">
+            <form wicket:id="settingsFileForm">
+                <div wicket:id="settingsFileFeedback"></div>
+                <div class="d-lg-flex align-items-lg-baseline">
+                    <label class="form-label text-nowrap mb-0" wicket:for="settingsFile">Settings File (job.json):</label>
+                    <input type="file" class="form-control mx-lg-3 mt-2" wicket:id="settingsFile">
+                    <button class="btn btn-primary mt-2" wicket:id="settingsFileLoad">Load</button>
+                    <button class="btn btn-primary mt-2 ms-3" wicket:id="resetSettings">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="d-flex mt-4 align-items-center justify-content-between">
+        <div class="d-flex flex-wrap">
+            <label class="form-label mb-0 me-3">Current Status:</label>
+            <label class="form-label mb-0"><strong wicket:id="currentStatus"></strong></label>
+        </div>
+        <div class="d-flex">
+            <button class="btn btn-primary ms-3" wicket:id="start">Start</button>
+            <button class="btn btn-primary ms-3" wicket:id="stop">Stop</button>
+        </div>
+    </div>
+</div>
+
+</wicket:panel>
+</body>
+</html>

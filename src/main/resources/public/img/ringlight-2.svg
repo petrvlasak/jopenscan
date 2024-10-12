@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
+  <circle
+     cx="15"
+     cy="5.237288"
+     r="2.0338984"
+     id="circle1"
+     style="fill:rgba(255, 255, 255, 1);stroke:none;stroke-width:0.5" />
+  <circle
+     cx="24.762712"
+     cy="15"
+     r="2.0338984"
+     id="circle3"
+     style="fill:rgba(255, 255, 255, 1);stroke:none;stroke-width:0.5" />
+  <circle
+     cx="15"
+     cy="24.762712"
+     r="2.0338984"
+     id="circle5"
+     style="fill:rgba(255, 255, 255, 1);stroke:none;stroke-width:0.5" />
+  <circle
+     cx="5.237288"
+     cy="15"
+     r="2.0338984"
+     id="circle7"
+     style="fill:rgba(255, 255, 255, 1);stroke:none;stroke-width:0.5" />
+</svg>
