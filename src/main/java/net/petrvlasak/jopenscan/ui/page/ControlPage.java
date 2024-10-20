@@ -5,10 +5,12 @@ import com.googlecode.wicketforge.annotations.ComponentFactory;
 import de.agilecoders.wicket.core.markup.html.bootstrap.helpers.ColorAndBackgroundBehavior;
 import net.petrvlasak.jopenscan.ui.WicketApplication;
 import net.petrvlasak.jopenscan.ui.component.CardBorder;
+import net.petrvlasak.jopenscan.ui.component.DisabledDuringScanningBehavior;
 import net.petrvlasak.jopenscan.ui.event.OnPageEventRefreshBehavior;
 import net.petrvlasak.jopenscan.domain.CameraType;
 import net.petrvlasak.jopenscan.domain.JobSettings;
 import net.petrvlasak.jopenscan.domain.MachineSettings;
+import net.petrvlasak.jopenscan.ui.event.WebSocketEventType;
 import net.petrvlasak.jopenscan.ui.page.control.*;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
@@ -58,7 +60,8 @@ public class ControlPage extends BasePage<JobSettings> {
         return new ColumnWrapper(id)
                 .add(newCardBorder("machine", "Machine")
                         .add(new MachinePanel("machinePanel", getModel().map(JobSettings::getMachine))))
-                .add(new OnPageEventRefreshBehavior(ControlPageEventType.CAMERA_TYPE_CHANGED, ControlPageEventType.SETTINGS_UPDATED));
+                .add(new OnPageEventRefreshBehavior(ControlPageEventType.CAMERA_TYPE_CHANGED, ControlPageEventType.SETTINGS_UPDATED))
+                .add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED));
     }
 
     @ComponentFactory
@@ -67,7 +70,8 @@ public class ControlPage extends BasePage<JobSettings> {
                 .add(newCardBorder("camParams", "Camera Parameters")
                         .add(new CamParamsPanel("camParamsPanel", getModel().map(JobSettings::getCamera),
                                 getModel().map(JobSettings::getMachine).map(MachineSettings::getCameraType))))
-                .add(new OnPageEventRefreshBehavior(ControlPageEventType.CAMERA_TYPE_CHANGED, ControlPageEventType.SETTINGS_UPDATED));
+                .add(new OnPageEventRefreshBehavior(ControlPageEventType.CAMERA_TYPE_CHANGED, ControlPageEventType.SETTINGS_UPDATED))
+                .add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED));
     }
 
     @ComponentFactory

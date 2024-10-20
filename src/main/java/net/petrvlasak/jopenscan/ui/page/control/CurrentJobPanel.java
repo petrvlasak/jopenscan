@@ -5,7 +5,10 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel
 import net.petrvlasak.jopenscan.domain.JobSettings;
 import net.petrvlasak.jopenscan.ui.WicketApplication;
 import net.petrvlasak.jopenscan.ui.component.AjaxFormComponentValidationBehavior;
+import net.petrvlasak.jopenscan.ui.component.DisabledDuringScanningBehavior;
 import net.petrvlasak.jopenscan.ui.component.RangeInputAndValuePanel;
+import net.petrvlasak.jopenscan.ui.event.OnWebSocketEventRefreshBehavior;
+import net.petrvlasak.jopenscan.ui.event.WebSocketEventType;
 import net.petrvlasak.jopenscan.ui.page.ControlPageEventType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -37,19 +40,19 @@ public class CurrentJobPanel extends GenericPanel<JobSettings> {
         add(new RangeInputAndValuePanel<>("photosPerRotation",
                 LambdaModel.of(model, JobSettings::getPhotosPerRotation, JobSettings::setPhotosPerRotation),
                 String::valueOf, Model.of("Photos per Rotation:")
-        ).setMinimum((byte) 3).setMaximum((byte) 20));
+        ).setMinimum((byte) 3).setMaximum((byte) 20).add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED)));
         add(new RangeInputAndValuePanel<>("verticalPositions",
                 LambdaModel.of(model, JobSettings::getVerticalPositions, JobSettings::setVerticalPositions),
                 String::valueOf, Model.of("Vertical Positions:")
-        ).setMinimum((byte) 2).setMaximum((byte) 20));
+        ).setMinimum((byte) 2).setMaximum((byte) 20).add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED)));
         add(new RangeInputAndValuePanel<>("startDeflection",
                 LambdaModel.of(model, JobSettings::getStartDeflection, JobSettings::setStartDeflection),
                 (n) -> n + "°", Model.of("Start Deflection:")
-        ).setMinimum((byte) 0).setMaximum((byte) 90));
+        ).setMinimum((byte) 0).setMaximum((byte) 90).add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED)));
         add(new RangeInputAndValuePanel<>("endDeflection",
                 LambdaModel.of(model, JobSettings::getEndDeflection, JobSettings::setEndDeflection),
                 (n) -> n + "°", Model.of("End Deflection:")
-        ).setMinimum((byte) 0).setMaximum((byte) 90));
+        ).setMinimum((byte) 0).setMaximum((byte) 90).add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED)));
         add(projectForm = newProjectForm("projectForm"));
         add(newSettingsFile());
         add(newCurrentStatus("currentStatus"));
@@ -61,6 +64,7 @@ public class CurrentJobPanel extends GenericPanel<JobSettings> {
     private Form<Void> newProjectForm(String id) {
         Form<Void> form = new Form<>(id);
         form.add(newProjectName("projectName"));
+        form.add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED));
         return form;
     }
 
@@ -108,6 +112,7 @@ public class CurrentJobPanel extends GenericPanel<JobSettings> {
 
         Form<Void> form = newSettingsFileForm("settingsFileForm", file);
         form.add(feedback, file, load, reset);
+        form.add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED));
 
         return form;
     }
@@ -140,18 +145,20 @@ public class CurrentJobPanel extends GenericPanel<JobSettings> {
 
     @ComponentFactory
     private Label newCurrentStatus(String id) {
-        return new Label(id, LambdaModel.of(WicketApplication::get).map(WicketApplication::getCurrentJobStatus));
+        Label label = new Label(id, LambdaModel.of(WicketApplication::get).map(WicketApplication::getCurrentJobStatus));
+        label.add(new OnWebSocketEventRefreshBehavior(WebSocketEventType.SCANNING_STATE_CHANGED, WebSocketEventType.SCANNING_NEW_PROGRESS));
+        return label;
     }
 
     @ComponentFactory
     private AjaxButton newStart(String id) {
-        return new AjaxButton(id, projectForm) {
+        AjaxButton button = new AjaxButton(id, projectForm) {
             @Serial
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
-                //TODO
+                WicketApplication.get().startScanningTask();
             }
 
             @Override
@@ -159,19 +166,23 @@ public class CurrentJobPanel extends GenericPanel<JobSettings> {
                 target.add(projectForm);
             }
         };
+        button.add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED));
+        return button;
     }
 
     @ComponentFactory
     private AjaxLink<Void> newStop(String id) {
-        return new AjaxLink<>(id) {
+        AjaxLink<Void> button = new AjaxLink<>(id) {
             @Serial
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                //TODO
+                WicketApplication.get().stopScanningTask();
             }
         };
+        button.add(new DisabledDuringScanningBehavior(WebSocketEventType.SCANNING_STATE_CHANGED).setReverse(true));
+        return button;
     }
 
 }
