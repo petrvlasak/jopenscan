@@ -2,7 +2,12 @@ package net.petrvlasak.jopenscan.hal;
 
 import net.petrvlasak.jopenscan.domain.CameraSettings;
 
+import java.io.Serial;
+
 public abstract class AbstractExternalCamera implements Camera {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final long timePerPhoto;
     private long prevPhotoTs;

@@ -1,6 +1,8 @@
 package net.petrvlasak.jopenscan.hal;
 
-public interface StepperMotor {
+import java.io.Serializable;
+
+public interface StepperMotor extends Serializable {
 
     void rotate(float angle) throws InterruptedException;
 

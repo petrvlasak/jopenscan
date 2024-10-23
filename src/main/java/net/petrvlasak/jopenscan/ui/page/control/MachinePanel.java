@@ -4,8 +4,11 @@ import com.googlecode.wicketforge.annotations.ComponentFactory;
 import net.petrvlasak.jopenscan.domain.CameraType;
 import net.petrvlasak.jopenscan.domain.MachineSettings;
 import net.petrvlasak.jopenscan.domain.RinglightLedsOn;
+import net.petrvlasak.jopenscan.hal.StepperMotorFactory;
 import net.petrvlasak.jopenscan.ui.WicketApplication;
 import net.petrvlasak.jopenscan.ui.component.RangeInputAndValuePanel;
+import net.petrvlasak.jopenscan.ui.component.StepperMotorTurnLink;
+import net.petrvlasak.jopenscan.ui.event.WebSocketEventType;
 import net.petrvlasak.jopenscan.ui.page.ControlPageEventType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
@@ -20,6 +23,7 @@ import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.io.Serial;
 import java.util.Arrays;
@@ -29,11 +33,14 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @SpringBean
+    private StepperMotorFactory stepperMotorFactory;
+
     public MachinePanel(String id, IModel<MachineSettings> model) {
         super(id, model);
 
         add(newCameraType("cameraType"));
-        add(newRotor("rotor"));
+        add(newRotorWrapper("rotor"));
         add(newTurntable("turntable"));
         add(newRinglightLeds("ringlightLeds"));
         add(new RangeInputAndValuePanel<>("ringlightIntensity",
@@ -64,21 +71,28 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
     }
 
     @ComponentFactory
-    private WebMarkupContainer newRotor(String id) {
+    private WebMarkupContainer newRotorWrapper(String id) {
         WebMarkupContainer container = new WebMarkupContainer(id);
         container.add(new WebMarkupContainer("rotorLabelColumn")
                 .add(AttributeAppender.append("class", getModel()
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-6" : "col-lg-4"))));
         container.add(new WebMarkupContainer("rotorUpColumn")
+                .add(newRotor("rotorUp", -5f))
                 .add(AttributeAppender.append("class", getModel()
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-3" : "col-lg-4"))));
         container.add(new WebMarkupContainer("rotorDownColumn")
+                .add(newRotor("rotorDown", 5f))
                 .add(AttributeAppender.append("class", getModel()
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-3" : "col-lg-4"))));
         return container;
+    }
+
+    private StepperMotorTurnLink newRotor(String id, float angle) {
+        return new StepperMotorTurnLink(id, WebSocketEventType.ROTOR_RUNNING_START,
+                WebSocketEventType.ROTOR_RUNNING_STOP, () -> stepperMotorFactory.getRotor(), angle);
     }
 
     @ComponentFactory
@@ -89,14 +103,21 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-6" : "col-lg-4"))));
         container.add(new WebMarkupContainer("turntableLeftColumn")
+                .add(newTurntable("turntableLeft", 15f))
                 .add(AttributeAppender.append("class", getModel()
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-3" : "col-lg-4"))));
         container.add(new WebMarkupContainer("turntableRightColumn")
+                .add(newTurntable("turntableRight", -15f))
                 .add(AttributeAppender.append("class", getModel()
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-3" : "col-lg-4"))));
         return container;
+    }
+
+    private StepperMotorTurnLink newTurntable(String id, float angle) {
+        return new StepperMotorTurnLink(id, WebSocketEventType.TURNTABLE_RUNNING_START,
+                WebSocketEventType.TURNTABLE_RUNNING_STOP, () -> stepperMotorFactory.getTurntable(), angle);
     }
 
     @ComponentFactory
