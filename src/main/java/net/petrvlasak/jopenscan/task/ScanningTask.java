@@ -17,11 +17,11 @@ public class ScanningTask implements Runnable {
 
     private final byte startDeflection;
     private final byte endDeflection;
-    private final byte turntableSteps;
-    private final float turntableStepAngle;
-
     private final byte rotorSteps;
     private final float rotorStepAngle;
+
+    private final byte turntableSteps;
+    private final float turntableStepAngle;
 
     private short photosCurrent;
     private final short photosCount;
@@ -36,11 +36,11 @@ public class ScanningTask implements Runnable {
 
         startDeflection = jobSettings.getStartDeflection();
         endDeflection = jobSettings.getEndDeflection();
-        turntableSteps = (byte) (jobSettings.getVerticalPositions() - 1);
-        turntableStepAngle = -1.0f * (startDeflection + jobSettings.getEndDeflection()) / turntableSteps;
+        rotorSteps = (byte) (jobSettings.getVerticalPositions() - 1);
+        rotorStepAngle = -1.0f * (startDeflection + jobSettings.getEndDeflection()) / rotorSteps;
 
-        rotorSteps = jobSettings.getPhotosPerRotation();
-        rotorStepAngle = 360.0f / rotorSteps;
+        turntableSteps = jobSettings.getPhotosPerRotation();
+        turntableStepAngle = 360.0f / turntableSteps;
 
         photosCurrent = 0;
         photosCount = (short) (jobSettings.getPhotosPerRotation() * jobSettings.getVerticalPositions());
@@ -59,13 +59,13 @@ public class ScanningTask implements Runnable {
     @Override
     public void run() {
         try {
-            turntable.rotate(startDeflection);
+            rotor.rotate(startDeflection);
             performHorizontalRotation();
-            for (byte t = 0; t < turntableSteps; t++) {
-                turntable.rotate(turntableStepAngle);
+            for (byte t = 0; t < rotorSteps; t++) {
+                rotor.rotate(rotorStepAngle);
                 performHorizontalRotation();
             }
-            turntable.rotate(endDeflection);
+            rotor.rotate(endDeflection);
         } catch (InterruptedException ignored) {
         } catch (Exception e) {
             if (onError != null) onError.accept(e);
@@ -73,13 +73,13 @@ public class ScanningTask implements Runnable {
     }
 
     private void performHorizontalRotation() throws InterruptedException {
-        for (byte r = 0; r < rotorSteps; r++) {
+        for (byte r = 0; r < turntableSteps; r++) {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
             }
             camera.takePhoto();
             if (onTakePhoto != null) onTakePhoto.accept(++photosCurrent, photosCount);
-            rotor.rotate(rotorStepAngle);
+            turntable.rotate(turntableStepAngle);
         }
     }
 
