@@ -1,6 +1,8 @@
 {
   "machine": {
     "cameraType": "RPI",
+    "rotorEnabled": true,
+    "turntableEnabled": false,
     "ringlightLedsOn": "LED1",
     "ringlightIntensity": 40
   },

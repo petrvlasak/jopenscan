@@ -18,6 +18,8 @@ public class MachineSettings implements Serializable {
     private static final long serialVersionUID = 848570664965812504L;
 
     private CameraType cameraType;
+    private Boolean rotorEnabled;
+    private Boolean turntableEnabled;
     private RinglightLedsOn ringlightLedsOn;
     private Byte ringlightIntensity;
 

@@ -10,6 +10,7 @@ import net.petrvlasak.jopenscan.domain.JobSettings;
 import net.petrvlasak.jopenscan.domain.MachineSettings;
 import net.petrvlasak.jopenscan.hal.Ringlight;
 import net.petrvlasak.jopenscan.hal.RinglightFactory;
+import net.petrvlasak.jopenscan.hal.StepperMotorFactory;
 import net.petrvlasak.jopenscan.service.JobSettingsService;
 import net.petrvlasak.jopenscan.service.JobSettingsServiceException;
 import net.petrvlasak.jopenscan.ui.helper.ScanningTaskController;
@@ -31,6 +32,7 @@ public class WicketApplication extends WicketBootStandardWebApplication {
 
     private final JobSettingsService jobSettingsService;
     private final ScanningTaskController scanningTaskController;
+    private final StepperMotorFactory stepperMotorFactory;
     private final RinglightFactory ringlightFactory;
 
     @Getter @Setter
@@ -91,6 +93,8 @@ public class WicketApplication extends WicketBootStandardWebApplication {
     }
 
     private void applyMachineSettings(MachineSettings machineSettings) {
+        stepperMotorFactory.getRotor().setEnabled(machineSettings.getRotorEnabled());
+        stepperMotorFactory.getTurntable().setEnabled(machineSettings.getTurntableEnabled());
         Ringlight ringlight = ringlightFactory.getRinglight();
         ringlight.switchOn(machineSettings.getRinglightLedsOn());
         ringlight.setIntensity(machineSettings.getRinglightIntensity());

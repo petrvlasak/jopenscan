@@ -51,6 +51,12 @@ public class JobSettingsServiceImpl implements JobSettingsService {
         if (machine.getCameraType() == null) {
             machine.setCameraType(CameraType.RPI);
         }
+        if (machine.getRotorEnabled() == null) {
+            machine.setRotorEnabled(false);
+        }
+        if (machine.getTurntableEnabled() == null) {
+            machine.setTurntableEnabled(false);
+        }
         if (machine.getRinglightIntensity() == null) {
             machine.setRinglightIntensity((byte) 0);
         }

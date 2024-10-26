@@ -13,18 +13,17 @@ import net.petrvlasak.jopenscan.ui.event.WebSocketEventType;
 import net.petrvlasak.jopenscan.ui.page.ControlPageEventType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.EnumChoiceRenderer;
-import org.apache.wicket.markup.html.form.Radio;
-import org.apache.wicket.markup.html.form.RadioGroup;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.danekja.java.util.function.serializable.SerializableBiConsumer;
 
 import java.io.Serial;
 import java.util.Arrays;
@@ -45,7 +44,7 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
 
         add(newCameraType("cameraType"));
         add(newRotorWrapper("rotor"));
-        add(newTurntable("turntable"));
+        add(newTurntableWrapper("turntable"));
         add(newRinglightLeds("ringlightLeds"));
         add(new RangeInputAndValuePanel<>("ringlightIntensity",
                 LambdaModel.of(model, MachineSettings::getRinglightIntensity, MachineSettings::setRinglightIntensity),
@@ -85,7 +84,9 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
     @ComponentFactory
     private WebMarkupContainer newRotorWrapper(String id) {
         WebMarkupContainer container = new WebMarkupContainer(id);
+        container.setOutputMarkupId(true);
         container.add(new WebMarkupContainer("rotorLabelColumn")
+                .add(newRotorEnabled("rotorEnabled", container))
                 .add(AttributeAppender.append("class", getModel()
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-6" : "col-lg-4"))));
@@ -102,15 +103,51 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
         return container;
     }
 
+    private CheckBox newRotorEnabled(String id, WebMarkupContainer container) {
+        return newStepperMotorEnabled(id,
+                LambdaModel.of(getModel(), MachineSettings::getRotorEnabled, MachineSettings::setRotorEnabled),
+                (enabled, target) -> {
+                    stepperMotorFactory.getRotor().setEnabled(enabled);
+                    target.add(container);
+                });
+    }
+
+    private CheckBox newStepperMotorEnabled(String id, IModel<Boolean> model,
+                                            SerializableBiConsumer<Boolean, AjaxRequestTarget> onUpdate) {
+        CheckBox checkBox = new CheckBox(id, model);
+        checkBox.add(new AjaxFormComponentUpdatingBehavior("click") {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                Boolean enabled = checkBox.getConvertedInput();
+                checkBox.setModelObject(enabled);
+                onUpdate.accept(enabled, target);
+            }
+        });
+        return checkBox;
+    }
+
     private StepperMotorTurnLink newRotor(String id, float angle) {
         return new StepperMotorTurnLink(id, WebSocketEventType.ROTOR_RUNNING_START,
-                WebSocketEventType.ROTOR_RUNNING_STOP, () -> stepperMotorFactory.getRotor(), angle);
+                WebSocketEventType.ROTOR_RUNNING_STOP, () -> stepperMotorFactory.getRotor(), angle) {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                return super.isEnabled() && MachinePanel.this.getModelObject().getRotorEnabled();
+            }
+        };
     }
 
     @ComponentFactory
-    private WebMarkupContainer newTurntable(String id) {
+    private WebMarkupContainer newTurntableWrapper(String id) {
         WebMarkupContainer container = new WebMarkupContainer(id);
+        container.setOutputMarkupId(true);
         container.add(new WebMarkupContainer("turntableLabelColumn")
+                .add(newTurntableEnabled("turntableEnabled", container))
                 .add(AttributeAppender.append("class", getModel()
                         .map(MachineSettings::getCameraType)
                         .map(ct -> ct == CameraType.RPI ? "col-lg-6" : "col-lg-4"))));
@@ -127,9 +164,26 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
         return container;
     }
 
+    private CheckBox newTurntableEnabled(String id, WebMarkupContainer container) {
+        return newStepperMotorEnabled(id,
+                LambdaModel.of(getModel(), MachineSettings::getTurntableEnabled, MachineSettings::setTurntableEnabled),
+                (enabled, target) -> {
+                    stepperMotorFactory.getTurntable().setEnabled(enabled);
+                    target.add(container);
+                });
+    }
+
     private StepperMotorTurnLink newTurntable(String id, float angle) {
         return new StepperMotorTurnLink(id, WebSocketEventType.TURNTABLE_RUNNING_START,
-                WebSocketEventType.TURNTABLE_RUNNING_STOP, () -> stepperMotorFactory.getTurntable(), angle);
+                WebSocketEventType.TURNTABLE_RUNNING_STOP, () -> stepperMotorFactory.getTurntable(), angle) {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                return super.isEnabled() && MachinePanel.this.getModelObject().getTurntableEnabled();
+            }
+        };
     }
 
     @ComponentFactory

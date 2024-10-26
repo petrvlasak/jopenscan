@@ -1,6 +1,7 @@
 package net.petrvlasak.jopenscan.ui.helper;
 
 import lombok.RequiredArgsConstructor;
+import net.petrvlasak.jopenscan.domain.MachineSettings;
 import net.petrvlasak.jopenscan.task.ScanningTaskFactory;
 import net.petrvlasak.jopenscan.ui.WicketApplication;
 import net.petrvlasak.jopenscan.ui.event.WebSocketEventType;
@@ -50,6 +51,9 @@ public class ScanningTaskControllerImpl implements ScanningTaskController {
             if (!scanningThreadFailed) {
                 application.setCurrentJobStatus(SCANNING_TASK_STATUS_READY);
             }
+            MachineSettings machineSettings = application.getCurrentJobSettings().getMachine();
+            machineSettings.setRotorEnabled(false);
+            machineSettings.setTurntableEnabled(false);
             application.sendPushMessage(WebSocketEventType.SCANNING_STATE_CHANGED);
         });
         setCurrentJobStatusAndPushMessage(SCANNING_TASK_STATUS_PREPARING, WebSocketEventType.SCANNING_STATE_CHANGED);

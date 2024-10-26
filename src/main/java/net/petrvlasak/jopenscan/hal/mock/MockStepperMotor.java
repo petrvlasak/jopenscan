@@ -18,6 +18,11 @@ public class MockStepperMotor implements StepperMotor {
     private final String name;
 
     @Override
+    public void setEnabled(boolean enabled) {
+        LOGGER.info("{} is {}", name, enabled ? "ON" : "OFF");
+    }
+
+    @Override
     public void rotate(float angle) {
         LOGGER.info("{}: rotate by {} degrees", name, angle);
     }

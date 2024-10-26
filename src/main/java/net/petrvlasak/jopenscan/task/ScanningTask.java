@@ -59,6 +59,8 @@ public class ScanningTask implements Runnable {
     @Override
     public void run() {
         try {
+            rotor.setEnabled(true);
+            turntable.setEnabled(true);
             rotor.rotate(startDeflection);
             performHorizontalRotation();
             for (byte t = 0; t < rotorSteps; t++) {
@@ -69,6 +71,9 @@ public class ScanningTask implements Runnable {
         } catch (InterruptedException ignored) {
         } catch (Exception e) {
             if (onError != null) onError.accept(e);
+        } finally {
+            rotor.setEnabled(false);
+            turntable.setEnabled(false);
         }
     }
 

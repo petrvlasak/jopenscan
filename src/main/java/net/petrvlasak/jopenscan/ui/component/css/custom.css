@@ -1,3 +1,17 @@
 p.validation.validation-message.invalid-feedback {
     margin-bottom: 0;
 }
+
+@media (min-width: 992px) {
+
+    .stepper-motor-switch {
+        padding-left: 0;
+    }
+
+    .stepper-motor-switch input {
+        float: none !important;
+        margin-left: 0 !important;
+        margin-right: .2em;
+    }
+
+}

@@ -1,6 +1,8 @@
 {
   "machine": {
     "cameraType": "EXT",
+    "rotorEnabled": false,
+    "turntableEnabled": true,
     "ringlightLedsOn": "LED2",
     "ringlightIntensity": 60
   },
