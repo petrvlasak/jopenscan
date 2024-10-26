@@ -4,6 +4,7 @@ import com.googlecode.wicketforge.annotations.ComponentFactory;
 import net.petrvlasak.jopenscan.domain.CameraType;
 import net.petrvlasak.jopenscan.domain.MachineSettings;
 import net.petrvlasak.jopenscan.domain.RinglightLedsOn;
+import net.petrvlasak.jopenscan.hal.RinglightFactory;
 import net.petrvlasak.jopenscan.hal.StepperMotorFactory;
 import net.petrvlasak.jopenscan.ui.WicketApplication;
 import net.petrvlasak.jopenscan.ui.component.RangeInputAndValuePanel;
@@ -36,6 +37,9 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
     @SpringBean
     private StepperMotorFactory stepperMotorFactory;
 
+    @SpringBean
+    private RinglightFactory ringlightFactory;
+
     public MachinePanel(String id, IModel<MachineSettings> model) {
         super(id, model);
 
@@ -46,7 +50,15 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
         add(new RangeInputAndValuePanel<>("ringlightIntensity",
                 LambdaModel.of(model, MachineSettings::getRinglightIntensity, MachineSettings::setRinglightIntensity),
                 (n) -> n + "%", Model.of("Ringlight Intensity:")
-        ).setMinimum((byte) 0).setMaximum((byte) 100));
+        ) {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                ringlightFactory.getRinglight().setIntensity(getModelObject());
+            }
+        }.setMinimum((byte) 0).setMaximum((byte) 100));
     }
 
     @ComponentFactory
@@ -152,6 +164,7 @@ public class MachinePanel extends GenericPanel<MachineSettings> {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 group.setModelObject(group.getConvertedInput());
+                ringlightFactory.getRinglight().switchOn(group.getModelObject());
             }
         });
         return group;

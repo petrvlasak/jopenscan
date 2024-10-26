@@ -4,9 +4,12 @@ import com.giffing.wicket.spring.boot.starter.app.WicketBootStandardWebApplicati
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.petrvlasak.jopenscan.domain.CameraSettings;
 import net.petrvlasak.jopenscan.domain.CameraType;
 import net.petrvlasak.jopenscan.domain.JobSettings;
 import net.petrvlasak.jopenscan.domain.MachineSettings;
+import net.petrvlasak.jopenscan.hal.Ringlight;
+import net.petrvlasak.jopenscan.hal.RinglightFactory;
 import net.petrvlasak.jopenscan.service.JobSettingsService;
 import net.petrvlasak.jopenscan.service.JobSettingsServiceException;
 import net.petrvlasak.jopenscan.ui.helper.ScanningTaskController;
@@ -28,6 +31,7 @@ public class WicketApplication extends WicketBootStandardWebApplication {
 
     private final JobSettingsService jobSettingsService;
     private final ScanningTaskController scanningTaskController;
+    private final RinglightFactory ringlightFactory;
 
     @Getter @Setter
     private JobSettings currentJobSettings;
@@ -68,16 +72,32 @@ public class WicketApplication extends WicketBootStandardWebApplication {
         MachineSettings machineSettings = currentJobSettings.getMachine();
         if (machineSettings.getCameraType() != cameraType) {
             machineSettings.setCameraType(cameraType);
-            jobSettingsService.applyDefaults(currentJobSettings);
+            applySettings(currentJobSettings);
         }
     }
 
     public void loadSettings(InputStream inputStream) throws JobSettingsServiceException {
-        currentJobSettings = jobSettingsService.applyDefaults(jobSettingsService.load(inputStream));
+        applySettings(jobSettingsService.load(inputStream));
     }
 
     public void resetSettings() {
-        currentJobSettings = jobSettingsService.applyDefaults(new JobSettings());
+        applySettings(new JobSettings());
+    }
+
+    private void applySettings(JobSettings jobSettings) {
+        currentJobSettings = jobSettingsService.applyDefaults(jobSettings);
+        applyMachineSettings(currentJobSettings.getMachine());
+        applyCameraSettings(currentJobSettings.getCamera());
+    }
+
+    private void applyMachineSettings(MachineSettings machineSettings) {
+        Ringlight ringlight = ringlightFactory.getRinglight();
+        ringlight.switchOn(machineSettings.getRinglightLedsOn());
+        ringlight.setIntensity(machineSettings.getRinglightIntensity());
+    }
+
+    private void applyCameraSettings(CameraSettings cameraSettings) {
+        //TODO
     }
 
     public void startScanningTask() {

@@ -36,6 +36,7 @@ public class RangeInputAndValuePanel<N extends Number & Comparable<N>> extends G
             protected void onUpdate(AjaxRequestTarget target) {
                 field.setModelObject(field.getConvertedInput());
                 target.add(valueLabel);
+                RangeInputAndValuePanel.this.onUpdate(target);
             }
         });
         valueLabel.setOutputMarkupId(true);
@@ -97,6 +98,12 @@ public class RangeInputAndValuePanel<N extends Number & Comparable<N>> extends G
     public RangeInputAndValuePanel<N> setStep(IModel<N> step) {
         field.setStep(step);
         return this;
+    }
+
+    /**
+     * @see OnChangeAjaxBehavior#onUpdate(AjaxRequestTarget)
+     */
+    protected void onUpdate(AjaxRequestTarget target) {
     }
 
 }
