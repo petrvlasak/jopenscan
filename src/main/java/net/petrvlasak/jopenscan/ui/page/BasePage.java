@@ -11,6 +11,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.utilities.BackgroundColo
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.validation.SimpleMessageValidation;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesome6CssReference;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.icon.FontAwesome6IconType;
+import net.petrvlasak.jopenscan.config.AppConfig;
 import net.petrvlasak.jopenscan.ui.component.CustomCssReference;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -20,8 +21,10 @@ import org.apache.wicket.markup.html.GenericWebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LambdaModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -35,6 +38,9 @@ abstract class BasePage<T> extends GenericWebPage<T> {
     private static final String FIRST_TITLE_PART = "JOpenScan";
 
     private final StringBuilder title = new StringBuilder(FIRST_TITLE_PART);
+
+    @SpringBean
+    private AppConfig appConfig;
 
     public BasePage() {
         super();
@@ -54,6 +60,7 @@ abstract class BasePage<T> extends GenericWebPage<T> {
 
         add(new Label("title", title));
         add(newNavbar("navbar"));
+        add(newAppVersion("appVersion"));
         add(new SimpleMessageValidation());
     }
 
@@ -133,6 +140,11 @@ abstract class BasePage<T> extends GenericWebPage<T> {
         ));
 
         return navbar;
+    }
+
+    @ComponentFactory
+    private Label newAppVersion(String id) {
+        return new Label(id, LambdaModel.of(() -> appConfig.getVersion()));
     }
 
     protected void addTitlePart(String titlePart) {
