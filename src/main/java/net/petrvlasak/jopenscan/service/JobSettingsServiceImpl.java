@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 @Service
 public class JobSettingsServiceImpl implements JobSettingsService {
@@ -20,7 +21,7 @@ public class JobSettingsServiceImpl implements JobSettingsService {
         try {
             return mapper.readValue(inputStream, JobSettings.class);
         } catch (IOException e) {
-            throw new JobSettingsServiceException(e);
+            throw new JobSettingsServiceException("Error loading job settings: " + e.getMessage(), e);
         }
     }
 
@@ -103,6 +104,15 @@ public class JobSettingsServiceImpl implements JobSettingsService {
                 break;
             default:
                 throw new IllegalArgumentException("Unknown camera type: " + cameraType);
+        }
+    }
+
+    @Override
+    public void save(JobSettings jobSettings, OutputStream outputStream) throws JobSettingsServiceException {
+        try {
+            mapper.writeValue(outputStream, jobSettings);
+        } catch (IOException e) {
+            throw new JobSettingsServiceException("Error saving job settings: " + e.getMessage(), e);
         }
     }
 

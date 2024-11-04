@@ -1,16 +1,20 @@
 package net.petrvlasak.jopenscan.task;
 
 import net.petrvlasak.jopenscan.domain.JobSettings;
+import net.petrvlasak.jopenscan.domain.MachineSettings;
 import net.petrvlasak.jopenscan.hal.Camera;
-import net.petrvlasak.jopenscan.hal.CameraFactory;
 import net.petrvlasak.jopenscan.hal.StepperMotor;
-import net.petrvlasak.jopenscan.hal.StepperMotorFactory;
+import net.petrvlasak.jopenscan.service.ProjectService;
+import net.petrvlasak.jopenscan.service.ProjectServiceException;
 
+import java.nio.file.Path;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ScanningTask implements Runnable {
 
+    private final ProjectService projectService;
+    private final JobSettings jobSettings;
     private final StepperMotor rotor;
     private final StepperMotor turntable;
     private final Camera camera;
@@ -29,10 +33,13 @@ public class ScanningTask implements Runnable {
     private BiConsumer<Short, Short> onTakePhoto = null;
     private Consumer<Exception> onError = null;
 
-    public ScanningTask(StepperMotorFactory stepperMotorFactory, CameraFactory cameraFactory, JobSettings jobSettings) {
-        rotor = stepperMotorFactory.getRotor();
-        turntable = stepperMotorFactory.getTurntable();
-        camera = cameraFactory.getCamera(jobSettings);
+    public ScanningTask(ProjectService projectService, JobSettings jobSettings,
+                        StepperMotor rotor, StepperMotor turntable, Camera camera) {
+        this.projectService = projectService;
+        this.jobSettings = jobSettings;
+        this.rotor = rotor;
+        this.turntable = turntable;
+        this.camera = camera;
 
         startDeflection = jobSettings.getStartDeflection();
         endDeflection = jobSettings.getEndDeflection();
@@ -59,6 +66,7 @@ public class ScanningTask implements Runnable {
     @Override
     public void run() {
         try {
+            saveJobSettings();
             rotor.setEnabled(true);
             turntable.setEnabled(true);
             rotor.rotate(startDeflection);
@@ -75,6 +83,14 @@ public class ScanningTask implements Runnable {
             rotor.setEnabled(false);
             turntable.setEnabled(false);
         }
+    }
+
+    private void saveJobSettings() throws ProjectServiceException {
+        Path projectPath = projectService.createProjectPath(jobSettings.getProjectName());
+        MachineSettings machineSettings = jobSettings.getMachine();
+        machineSettings.setRotorEnabled(false);
+        machineSettings.setTurntableEnabled(false);
+        projectService.saveJobSettings(projectPath, jobSettings);
     }
 
     private void performHorizontalRotation() throws InterruptedException {
