@@ -3,12 +3,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.9</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <groupId>net.petrvlasak</groupId>
-    <artifactId>JOpenScan</artifactId>
-    <version>${revision}-${maven.build.timestamp}</version>
+    <artifactId>JOpenScan-parent</artifactId>
+    <version>0.0.1</version>
+
+    <packaging>pom</packaging>
 
     <name>JOpenScan</name>
-    <description>JOpenScan</description>
+    <description>JOpenScan is an application for controlling OpenScan - DIY 3D Scanner</description>
 
     <url/>
     <licenses>
@@ -24,148 +33,17 @@
         <url/>
     </scm>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.9</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
     <properties>
-        <revision>0.0.1</revision>
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
-        <wicket.version>10.0.0</wicket.version>
-        <wicketstuff.version>10.0.0</wicketstuff.version>
-        <wicket-spring-boot.version>4.0.0</wicket-spring-boot.version>
-        <wicket-bootstrap.version>7.0.3</wicket-bootstrap.version>
     </properties>
 
-    <dependencies>
-
-        <!-- Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
-
-        <!-- Wicket -->
-        <dependency>
-            <groupId>com.giffing.wicket.spring.boot.starter</groupId>
-            <artifactId>wicket-spring-boot-starter</artifactId>
-            <version>${wicket-spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wicketstuff</groupId>
-            <artifactId>wicketstuff-annotation</artifactId>
-            <version>${wicketstuff.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.agilecoders.wicket</groupId>
-            <artifactId>wicket-bootstrap-core</artifactId>
-            <version>${wicket-bootstrap.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.agilecoders.wicket</groupId>
-            <artifactId>wicket-bootstrap-extensions</artifactId>
-            <version>${wicket-bootstrap.version}</version>
-        </dependency>
-        <!--<dependency>
-            <groupId>de.agilecoders.wicket</groupId>
-            <artifactId>wicket-bootstrap-themes</artifactId>
-            <version>${wicket-bootstrap.version}</version>
-        </dependency>-->
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-native-websocket-javax</artifactId>
-            <version>${wicket.version}</version>
-        </dependency>
-
-        <!-- Other -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.wicketforge</groupId>
-            <artifactId>wicketforge-annotations</artifactId>
-            <version>1.0</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Tests -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-tester</artifactId>
-            <version>${wicket.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
+    <modules>
+        <module>app</module>
+    </modules>
 
     <build>
-
-        <finalName>${project.artifactId}-${project.version}</finalName>
-
-        <resources>
-            <resource>
-				<filtering>true</filtering>
-                <directory>src/main/resources</directory>
-				<includes>
-					<include>application.yml</include>
-				</includes>
-            </resource>
-            <resource>
-                <filtering>false</filtering>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>application.yml</exclude>
-                </excludes>
-            </resource>
-            <resource>
-				<filtering>false</filtering>
-                <directory>src/main/java</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-        </resources>
-
-		<testResources>
-			<testResource>
-				<filtering>false</filtering>
-				<directory>src/test/resources</directory>
-			</testResource>
-			<testResource>
-				<filtering>false</filtering>
-				<directory>src/test/java</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</testResource>
-		</testResources>
-
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -180,7 +58,6 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
 
 </project>

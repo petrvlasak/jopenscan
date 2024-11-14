@@ -8,4 +8,4 @@ wicket:
       enabled: false
 
 app:
-  version: "@project.version@"
+  version: "@project.version@-@maven.build.timestamp@"
