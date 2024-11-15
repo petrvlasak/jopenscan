@@ -5,14 +5,15 @@
 
     <parent>
         <groupId>net.petrvlasak</groupId>
-        <artifactId>JOpenScan-parent</artifactId>
+        <artifactId>jopenscan-parent</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>JOpenScan</artifactId>
+    <artifactId>jopenscan</artifactId>
     <name>JOpenScan - Application</name>
 
     <properties>
+        <app.version>${project.version}-${maven.build.timestamp}</app.version>
         <wicket.version>10.0.0</wicket.version>
         <wicketstuff.version>10.0.0</wicketstuff.version>
         <wicket-spring-boot.version>4.0.0</wicket-spring-boot.version>
@@ -20,6 +21,13 @@
     </properties>
 
     <dependencies>
+
+        <!-- Modules -->
+        <dependency>
+            <groupId>net.petrvlasak</groupId>
+            <artifactId>jopenscan-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Spring Boot -->
         <dependency>
@@ -72,13 +80,6 @@
             <artifactId>wicket-native-websocket-javax</artifactId>
             <version>${wicket.version}</version>
         </dependency>
-
-        <!-- Other -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>com.googlecode.wicketforge</groupId>
             <artifactId>wicketforge-annotations</artifactId>
@@ -101,9 +102,35 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>pi4j</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>net.petrvlasak</groupId>
+                    <artifactId>jopenscan-hal-pi4j</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>mock</id>
+            <dependencies>
+                <dependency>
+                    <groupId>net.petrvlasak</groupId>
+                    <artifactId>jopenscan-hal-mock</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <build>
 
-        <finalName>${project.artifactId}-${project.version}-${maven.build.timestamp}</finalName>
+        <finalName>${project.artifactId}-${app.version}</finalName>
 
         <resources>
             <resource>
@@ -142,6 +169,21 @@
 				</excludes>
 			</testResource>
 		</testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
 
     </build>
 

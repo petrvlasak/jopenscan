@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.petrvlasak</groupId>
+        <artifactId>jopenscan-hal-parent</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>jopenscan-hal-pi4j</artifactId>
+    <name>JOpenScan - Hardware Abstraction Layer - Pi4J</name>
+
+    <properties>
+        <pi4j.version>2.6.0</pi4j.version>
+    </properties>
+
+    <dependencies>
+
+        <!-- Modules -->
+        <dependency>
+            <groupId>net.petrvlasak</groupId>
+            <artifactId>jopenscan-hal</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Pi4J -->
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-core</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-raspberrypi</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-gpiod</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

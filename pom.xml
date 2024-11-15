@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>net.petrvlasak</groupId>
-    <artifactId>JOpenScan-parent</artifactId>
+    <artifactId>jopenscan-parent</artifactId>
     <version>0.0.1</version>
 
     <packaging>pom</packaging>
@@ -41,23 +41,23 @@
 
     <modules>
         <module>app</module>
+        <module>domain</module>
+        <module>hal</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <dependencies>
+
+        <!-- Other -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+    </dependencies>
 
 </project>
