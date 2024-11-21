@@ -20,8 +20,8 @@ public class Pi4jStepperMotorFactory implements StepperMotorFactory {
     private final StepperMotor turntable;
 
     public Pi4jStepperMotorFactory(Context context) {
-        this.rotor = new Pi4jStepperMotor(context, "ro", "Rotor", PIN_RO_EN, PIN_RO_DIR, PIN_RO_STEP);
-        this.turntable = new Pi4jStepperMotor(context, "tt", "Turntable", PIN_TT_EN, PIN_TT_DIR, PIN_TT_STEP);
+        rotor = new Pi4jStepperMotor(context, "ro", "Rotor", PIN_RO_EN, PIN_RO_DIR, PIN_RO_STEP);
+        turntable = new Pi4jStepperMotor(context, "tt", "Turntable", PIN_TT_EN, PIN_TT_DIR, PIN_TT_STEP);
     }
 
     @Override
