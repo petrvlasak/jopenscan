@@ -9,14 +9,24 @@ public abstract class AbstractExternalCamera implements Camera {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final long timePerPhoto;
+    private long timePerPhoto;
+    private long releaseTime;
     private long prevPhotoTs;
-    private final long releaseTime;
 
-    public AbstractExternalCamera(CameraSettings cameraSettings) {
-        timePerPhoto = Math.round(cameraSettings.getTimePerPhoto() * 1000);
+    public AbstractExternalCamera() {
+        setup(0.5f, (short) 10);
         prevPhotoTs = System.currentTimeMillis();
-        releaseTime = cameraSettings.getReleaseTime();
+    }
+
+    @Override
+    public Camera setup(CameraSettings cameraSettings) {
+        setup(cameraSettings.getTimePerPhoto(), cameraSettings.getReleaseTime());
+        return this;
+    }
+
+    private void setup(float timePerPhoto, short releaseTime) {
+        this.timePerPhoto = Math.round(timePerPhoto * 1000);
+        this.releaseTime = releaseTime;
     }
 
     @Override
@@ -26,14 +36,12 @@ public abstract class AbstractExternalCamera implements Camera {
         if (currentTs < nextPhotoTs) {
             Thread.sleep(nextPhotoTs - currentTs);
         }
-        switchOn();
+        switchState(true);
         Thread.sleep(releaseTime);
-        switchOff();
+        switchState(false);
         prevPhotoTs = System.currentTimeMillis();
     }
 
-    public abstract void switchOn() throws InterruptedException;
-
-    public abstract void switchOff() throws InterruptedException;
+    protected abstract void switchState(boolean on) throws InterruptedException;
 
 }

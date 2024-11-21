@@ -1,7 +1,6 @@
 package net.petrvlasak.jopenscan.hal.pi4j;
 
-import net.petrvlasak.jopenscan.domain.CameraType;
-import net.petrvlasak.jopenscan.domain.JobSettings;
+import com.pi4j.context.Context;
 import net.petrvlasak.jopenscan.hal.Camera;
 import net.petrvlasak.jopenscan.hal.CameraFactory;
 import org.springframework.stereotype.Component;
@@ -9,14 +8,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class Pi4jCameraFactory implements CameraFactory {
 
+    private final Camera rpiCamera;
+    private final Camera externalCamera;
+
+    public Pi4jCameraFactory(Context context) {
+        rpiCamera = new Pi4jRPiCamera(context);
+        externalCamera = new Pi4jExternalCamera(context);
+    }
+
     @Override
-    public Camera getCamera(JobSettings jobSettings) {
-        CameraType cameraType = jobSettings.getMachine().getCameraType();
-        return switch (cameraType) {
-            case RPI -> new Pi4jRPiCamera();
-            case EXT -> new Pi4jExternalCamera(jobSettings.getCamera());
-            default -> throw new IllegalStateException("Unsupported camera type: " + cameraType);
-        };
+    public Camera getRPiCamera() {
+        return rpiCamera;
+    }
+
+    @Override
+    public Camera getExternalCamera() {
+        return externalCamera;
     }
 
 }

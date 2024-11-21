@@ -1,6 +1,8 @@
 package net.petrvlasak.jopenscan.hal.pi4j;
 
-import net.petrvlasak.jopenscan.domain.CameraSettings;
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalState;
 import net.petrvlasak.jopenscan.hal.AbstractExternalCamera;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,18 +16,23 @@ public class Pi4jExternalCamera extends AbstractExternalCamera {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pi4jExternalCamera.class);
 
-    public Pi4jExternalCamera(CameraSettings cameraSettings) {
-        super(cameraSettings);
+    private static final int PIN_EXT_CAM = 10;
+
+    private final DigitalOutput extCam;
+
+    public Pi4jExternalCamera(Context context) {
+        extCam = context.create(DigitalOutput.newConfigBuilder(context)
+                .id("extCam")
+                .name("External camera")
+                .address(PIN_EXT_CAM)
+                .shutdown(DigitalState.LOW)
+                .initial(DigitalState.LOW));
     }
 
     @Override
-    public void switchOn() {
-        LOGGER.info("External camera switch on");
-    }
-
-    @Override
-    public void switchOff() {
-        LOGGER.info("External camera switch off");
+    protected void switchState(boolean on) {
+        extCam.state(on ? DigitalState.HIGH : DigitalState.LOW);
+        LOGGER.debug("{} switch {}", extCam.name(), on ? "ON" : "OFF");
     }
 
 }
