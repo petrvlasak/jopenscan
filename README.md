@@ -8,6 +8,9 @@ to use [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi
 for my 3D scanner. This board has only 512MB of RAM, so it does not meet the minimum requirements for
 the [original firmware](https://openscan-org.github.io/OpenScan-Doc/firmware/setup/).
 
+This firmware offers the option to turn off the stepper motors. However, this feature is only available
+when using [these PCBs](https://github.com/petrvlasak/jopenscan-pcb?tab=readme-ov-file#jopenscan---pi-shield-and-ringlight-pcbs).
+
 ## 🚧🚧🚧 This application is still under development 🚧🚧🚧
 
 Here is a list of things that still remain to be completed.
